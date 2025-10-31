@@ -95,19 +95,13 @@ export default async function ShopHomePage() {
           <header className="flex flex-col gap-2">
             <h2 className="text-2xl font-semibold text-gray-900">이번 주 인기 상품</h2>
             <p className="text-sm text-muted-foreground">
-              최근 업데이트된 상품을 가로 스크롤로 빠르게 살펴보세요.
+              최근 업데이트된 상품을 그리드로 한눈에 살펴보세요.
             </p>
           </header>
-          <div className="-mx-4 overflow-x-auto pb-2">
-            <div className="flex gap-4 px-4">
-              {trending.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  className="w-72 min-w-[18rem] flex-shrink-0"
-                />
-              ))}
-            </div>
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {trending.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
         </section>
       )}

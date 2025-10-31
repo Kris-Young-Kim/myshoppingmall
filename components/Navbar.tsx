@@ -14,7 +14,7 @@ const Navbar = () => {
   return (
     <header className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
       <Link href="/" className="text-2xl font-bold text-gray-900">
-        내일투어 샵
+        민투어 샵
       </Link>
       <nav className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">
         {navItems.map((item) => (

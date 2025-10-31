@@ -9,7 +9,7 @@ import { getProductCategoryLabel } from "@/types/product";
  */
 
 export interface CategoryFilterProps {
-  categories: string[];
+  categories: readonly string[];
   selectedCategory?: string;
   basePath?: string;
   query?: Record<string, string | undefined>;
