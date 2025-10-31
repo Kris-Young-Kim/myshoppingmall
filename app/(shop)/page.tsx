@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { Flame, ArrowRight } from "lucide-react";
 import { CategoryFilter } from "@/components/product/category-filter";

@@ -1,4 +1,4 @@
-import { createClerkSupabaseClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 import type {
   ProductDetail,
   ProductFilterParams,
@@ -90,10 +90,15 @@ function normalizeParams(params: ProductFilterParams): NormalizedParams {
   };
 }
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+
+const staticSupabase = createClient(supabaseUrl, supabaseAnonKey);
+
 export async function fetchProductSummaries(
   params: ProductFilterParams = {},
 ): Promise<ProductSummary[]> {
-  const supabase = createClerkSupabaseClient();
+  const supabase = staticSupabase;
   const normalized = normalizeParams(params);
 
   console.group("[products] fetchProductSummaries");
@@ -143,7 +148,7 @@ export async function fetchProductSummaries(
 export async function fetchProductDetail(
   productId: string,
 ): Promise<ProductDetail | null> {
-  const supabase = createClerkSupabaseClient();
+  const supabase = staticSupabase;
 
   console.group("[products] fetchProductDetail");
   console.log("productId", productId);
@@ -175,7 +180,7 @@ export async function fetchProductDetail(
 }
 
 export async function fetchProductCategories(): Promise<string[]> {
-  const supabase = createClerkSupabaseClient();
+  const supabase = staticSupabase;
 
   console.group("[products] fetchProductCategories");
 
