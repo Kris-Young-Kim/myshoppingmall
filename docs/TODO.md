@@ -1,25 +1,29 @@
-- [ ] `.cursor/` 디렉토리
-  - [ ] `rules/` 커서룰
-  - [ ] `mcp.json` MCP 서버 설정
-  - [ ] `dir.md` 프로젝트 디렉토리 구조
-- [ ] `.github/` 디렉토리
-- [ ] `.husky/` 디렉토리
-- [ ] `app/` 디렉토리
-  - [ ] `favicon.ico` 파일
-  - [ ] `not-found.tsx` 파일
-  - [ ] `robots.ts` 파일
-  - [ ] `sitemap.ts` 파일
-  - [ ] `manifest.ts` 파일
-- [ ] `supabase/` 디렉토리
-- [ ] `public/` 디렉토리
-  - [ ] `icons/` 디렉토리
-  - [ ] `logo.png` 파일
-  - [ ] `og-image.png` 파일
-- [ ] `tsconfig.json` 파일
-- [ ] `.cursorignore` 파일
-- [ ] `.gitignore` 파일
-- [ ] `.prettierignore` 파일
-- [ ] `.prettierrc` 파일
-- [ ] `tsconfig.json` 파일
-- [ ] `eslint.config.mjs` 파일
-- [ ] `AGENTS.md` 파일
+- [ ] Phase 1 · 기본 인프라 구축
+  - [ ] Next.js 15 프로젝트 초기 설정 및 레이아웃 구조 확립
+  - [ ] Clerk 인증 연동 (Sign in / Sign up 플로우, 한국어 현지화 포함)
+  - [ ] Supabase 프로젝트 연결 및 `supabase/migrations/update_shopping_mall_schema.sql` 적용 검증
+  - [ ] 글로벌 스타일(`app/globals.css`)과 기본 네비게이션 셸 구성
+- [ ] Phase 2 · 상품 기능
+  - [ ] 메인 홈 화면 설계 (핵심 카테고리/프로모션 강조)
+  - [ ] 상품 목록 페이지 구현 (카테고리 필터 + 정렬 우선순위)
+  - [ ] 상품 상세 페이지 구현 (재고, 가격, 설명, CTA 표시)
+  - [ ] Supabase 콘솔에서 어드민 상품 입력 가이드 문서화
+- [ ] Phase 3 · 장바구니 & 주문
+  - [ ] 장바구니 추가/삭제/수량 변경 서버 액션 및 UI 구성
+  - [ ] 주문 생성 플로우 설계 (배송지, 메모 입력 포함)
+  - [ ] 주문 내역을 Supabase `orders`/`order_items`와 연동
+- [ ] Phase 4 · 결제 통합
+  - [ ] Toss Payments MCP 테스트 모드 연동 (결제 수단 선택 UI 포함)
+  - [ ] 결제 성공/실패 콜백 처리 및 주문 저장 로직 연결
+  - [ ] 결제 완료 화면 및 사용자 알림 추가
+- [ ] Phase 5 · 마이페이지
+  - [ ] 주문 내역 목록 페이지 구현 (상태 필터 포함)
+  - [ ] 주문 상세 화면에서 주문 아이템/배송 정보 표시
+- [ ] Phase 6 · 테스트 & 배포
+  - [ ] 핵심 사용자 시나리오 E2E 테스트 (로그인→장바구니→결제)
+  - [ ] 버그 수정 및 성능 점검 (이미지 최적화, 로딩 상태 등)
+  - [ ] Vercel 배포 및 기본 모니터링 설정
+- [ ] 지원 작업 & 문서화
+  - [ ] PRD 대비 구현 범위 체크리스트 유지
+  - [ ] README 업데이트 및 운영 가이드 작성
+  - [ ] MVP 성공 지표 대시보드(임시) 설계
