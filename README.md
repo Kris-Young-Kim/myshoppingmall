@@ -89,6 +89,12 @@ Next.js 15, Clerk, Supabase를 활용한 모던 SaaS 애플리케이션 템플�
 - shadcn/ui 기반 모던 컴포넌트
 - 완전한 반응형 디자인
 - 다크/라이트 모드 지원 가능
+
+### 🛒 쇼핑몰 Phase 2 UI
+- HOT SALE 섹션과 추천 상품 캐러셀을 갖춘 홈 화면(`/`)
+- 카테고리/가격/정렬 필터를 지원하는 상품 목록 페이지(`/products`)
+- Supabase 데이터를 기반으로 한 상품 상세 페이지(`/products/[id]`)
+- 운영자용 상품 등록 가이드 문서(`docs/admin-product-guide.md`)
 - 접근성 준수 (WCAG)
 
 ### 🏗️ 아키텍처
@@ -354,41 +360,64 @@ Clerk에서 추가 로그인 방식을 활성화하려면:
 ```
 saas-template/
 ├── app/                    # Next.js App Router
+│   ├── (shop)/            # 쇼핑몰 메인 라우트 그룹
+│   │   ├── page.tsx       # 홈 (HOT SALE)
+│   │   └── products/      # 상품 목록/상세 페이지
+│   │       ├── page.tsx
+│   │       └── [id]/page.tsx
 │   ├── api/               # API Routes
-│   │   └── sync-user/    # Clerk → Supabase 사용자 동기화
-│   ├── auth-test/        # 인증 테스트 페이지
-│   ├── storage-test/     # 스토리지 테스트 페이지
-│   ├── layout.tsx        # Root Layout (Clerk Provider)
-│   ├── page.tsx          # 홈페이지
-│   └── globals.css       # 전역 스타일 (Tailwind v4 설정)
+│   │   └── sync-user/     # Clerk → Supabase 사용자 동기화
+│   ├── auth-test/         # 인증 테스트 페이지
+│   ├── storage-test/      # 스토리지 테스트 페이지
+│   ├── layout.tsx         # Root Layout (Clerk Provider)
+│   ├── page.tsx           # 루트 페이지 (shop 그룹 위임)
+│   └── globals.css        # 전역 스타일 (Tailwind v4 설정)
 │
 ├── components/            # React 컴포넌트
-│   ├── ui/               # shadcn/ui 컴포넌트 (자동 생성)
-│   ├── providers/        # Context Providers
+│   ├── product/           # 상품 카드/필터 컴포넌트
+│   ├── ui/                # shadcn/ui 컴포넌트 (자동 생성)
+│   ├── providers/         # Context Providers
 │   │   └── sync-user-provider.tsx
-│   └── Navbar.tsx        # 네비게이션 바
+│   └── Navbar.tsx         # 네비게이션 바
 │
 ├── lib/                   # 유틸리티 및 설정
 │   ├── supabase/         # Supabase 클라이언트들
 │   │   ├── clerk-client.ts    # Client Component용
 │   │   ├── server.ts          # Server Component용
 │   │   ├── service-role.ts    # 관리자용
-│   │   └── client.ts          # 공개 데이터용
+│   │   ├── client.ts          # 공개 데이터용
+│   │   └── queries/           # Supabase 쿼리 모듈
+│   │       └── products.ts
 │   └── utils.ts          # 공통 유틸리티 (cn 함수 등)
+│
+├── types/                 # TypeScript 타입 정의
+│   └── product.ts
 │
 ├── hooks/                 # Custom React Hooks
 │   └── use-sync-user.ts  # 사용자 동기화 훅
 │
 ├── supabase/             # Supabase 관련 파일
 │   ├── migrations/       # 데이터베이스 마이그레이션
-│   │   └── schema.sql   # 초기 스키마
+│   │   ├── setup_schema.sql
+│   │   ├── setup_storage.sql
+│   │   └── update_shopping_mall_schema.sql
 │   └── config.toml       # Supabase 프로젝트 설정
+│
+├── tests/                # Vitest + Testing Library 테스트 스켈레톤
+│   └── pages/
+│       └── shop-routes.test.tsx
 │
 ├── .cursor/              # Cursor AI 규칙
 │   └── rules/           # 개발 컨벤션 및 가이드
 │
 ├── middleware.ts         # Next.js 미들웨어 (Clerk)
 ├── .env.example         # 환경 변수 예시
+├── docs/                 # 문서 (PRD, TODO, 가이드)
+│   ├── TODO.md
+│   ├── prd.md
+│   ├── admin-product-guide.md
+│   └── reference/
+│       └── mermaid.md
 └── CLAUDE.md            # AI 에이전트용 프로젝트 가이드
 ```
 

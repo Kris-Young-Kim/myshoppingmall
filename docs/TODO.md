@@ -3,13 +3,13 @@
   - [x] Clerk 인증 연동 (Sign in / Sign up 플로우, 한국어 현지화 포함)
   - [x] Supabase 프로젝트 연결 및 `supabase/migrations/update_shopping_mall_schema.sql` 적용 검증
   - [x] 글로벌 스타일(`app/globals.css`)과 기본 네비게이션 셸 구성
-- [ ] Phase 2 · 상품 기능
-  - [ ] HOT SALE 섹션 포함 홈 히어로 + 추천 상품 캐러셀 설계
-  - [ ] 카테고리 탭 및 쿼리 파라미터 기반 필터 로직 구현
-  - [ ] 상품 목록 페이지 레이아웃 + 가격/정렬 옵션 추가
-  - [ ] 상품 카드 컴포넌트 (썸네일, 태그, 가격) 완성
-  - [ ] 상품 상세 페이지 UI 및 Supabase 데이터 연동
-  - [ ] 운영자용 상품 등록 가이드 문서화 (`docs/admin-product-guide.md`)
+- [x] Phase 2 · 상품 기능
+  - [x] HOT SALE 섹션 포함 홈 히어로 + 추천 상품 캐러셀 설계
+  - [x] 카테고리 탭 및 쿼리 파라미터 기반 필터 로직 구현
+  - [x] 상품 목록 페이지 레이아웃 + 가격/정렬 옵션 추가
+  - [x] 상품 카드 컴포넌트 (썸네일, 태그, 가격) 완성
+  - [x] 상품 상세 페이지 UI 및 Supabase 데이터 연동
+  - [x] 운영자용 상품 등록 가이드 문서화 (`docs/admin-product-guide.md`)
 - [ ] Phase 3 · 장바구니 & 주문
   - [ ] 장바구니 추가/삭제/수량 변경 서버 액션 및 UI 구성
   - [ ] 주문 생성 플로우 설계 (배송지, 메모 입력 포함)

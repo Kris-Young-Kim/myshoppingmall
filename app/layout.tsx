@@ -35,7 +35,7 @@ export default function RootLayout({
         >
           <SyncUserProvider>
             <Navbar />
-            {children}
+            <main>{children}</main>
           </SyncUserProvider>
         </body>
       </html>
