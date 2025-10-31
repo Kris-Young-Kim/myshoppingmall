@@ -1,7 +1,7 @@
 - [x] Phase 1 · 기본 인프라 구축
   - [x] Next.js 15 프로젝트 초기 설정 및 레이아웃 구조 확립
   - [x] Clerk 인증 연동 (Sign in / Sign up 플로우, 한국어 현지화 포함)
-  - [x] Supabase 프로젝트 연결 및 `supabase/migrations/update_shopping_mall_schema.sql` 적용 검증
+  - [x] Supabase 프로젝트 연결 및 `supabase/migrations/202510311622_shopping_mall_schema.sql` 적용 검증
   - [x] 글로벌 스타일(`app/globals.css`)과 기본 네비게이션 셸 구성
 - [x] Phase 2 · 상품 기능
   - [x] HOT SALE 섹션 포함 홈 히어로 + 추천 상품 캐러셀 설계

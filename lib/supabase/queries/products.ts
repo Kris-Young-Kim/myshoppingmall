@@ -123,6 +123,12 @@ export async function fetchProductSummaries(
   const { data, error } = await query;
 
   if (error) {
+    if (error.code === "PGRST205") {
+      console.warn("[products] products 테이블이 존재하지 않습니다. 빈 배열을 반환합니다.", error);
+      console.groupEnd();
+      return [];
+    }
+
     console.error("상품 목록 조회 실패", error);
     console.groupEnd();
     throw error;
@@ -179,6 +185,12 @@ export async function fetchProductCategories(): Promise<string[]> {
     .eq("is_active", true);
 
   if (error) {
+    if (error.code === "PGRST205") {
+      console.warn("[products] products 테이블 없음. 기본 카테고리 반환", error);
+      console.groupEnd();
+      return [];
+    }
+
     console.error("카테고리 조회 실패", error);
     console.groupEnd();
     throw error;
