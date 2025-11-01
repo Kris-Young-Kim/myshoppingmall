@@ -49,7 +49,7 @@ export function CategoryFilter({
       <Button
         variant={selectedCategory ? "outline" : "default"}
         size="sm"
-        className={cn("rounded-full px-4")}
+        className={cn("rounded-full px-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow")}
         asChild
       >
         <Link href={buildHref(undefined, basePath, query)}>전체</Link>
@@ -62,7 +62,7 @@ export function CategoryFilter({
             key={category}
             variant={isActive ? "default" : "outline"}
             size="sm"
-            className="rounded-full px-4"
+            className="rounded-full px-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow"
             asChild
           >
             <Link href={buildHref(category, basePath, query)}>
