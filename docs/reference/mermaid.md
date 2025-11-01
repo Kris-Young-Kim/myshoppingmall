@@ -21,10 +21,10 @@ Start([방문]) --> Home[홈 페이지]
     ProductDetail --> CtaSection[CTA & 장바구니 버튼]
 
     CtaSection --> Cart[장바구니]
-    Cart --> Order[주문/결제]
-    Order --> Pay[Toss 테스트 결제]
-    Pay --> Success{성공?}
-    Success -->|Yes| Complete[주문 완료]
+    Cart --> Order[주문/결제 정보]
+    Order --> ManualPay[입금 안내 페이지]
+    ManualPay --> Success{입금 확인?}
+    Success -->|Yes| Complete[주문 확정]
     Success -->|No| Order
 
     MyPage --> OrderList[주문 내역]
@@ -33,4 +33,4 @@ Start([방문]) --> Home[홈 페이지]
     style Start fill:#e1f5e1
     style ProductCard fill:#e8f4ff
     style ProductDetail fill:#fcefe7
-    style Pay fill:#e1f0ff
+    style ManualPay fill:#e1f0ff

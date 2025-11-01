@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { initiateTossPaymentAction } from "@/actions/payments";
+import { submitManualPaymentAction } from "@/actions/payments";
 import { Button } from "@/components/ui/button";
 import { createClerkSupabaseClient } from "@/lib/supabase/server";
 
@@ -64,7 +64,7 @@ export default async function CheckoutPage() {
           </p>
         </div>
 
-        <form action={initiateTossPaymentAction} className="space-y-6">
+        <form action={submitManualPaymentAction} className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="recipient">
@@ -145,20 +145,21 @@ export default async function CheckoutPage() {
           </div>
 
           <div className="space-y-4 rounded-2xl border border-dashed border-gray-200 p-4">
-            <h2 className="text-base font-semibold text-gray-900">결제 수단</h2>
+            <h2 className="text-base font-semibold text-gray-900">입금 안내</h2>
             <p className="text-sm text-muted-foreground">
-              토스페이먼츠 테스트 모드로 결제가 진행됩니다. 결제 페이지에서 결제를 완료하거나 취소할 수 있습니다.
+              아래 계좌로 주문 금액을 입금해 주세요. 입금이 확인되면 주문이 확정되고 여행 담당자가 개별 연락을 드립니다.
             </p>
-            <label className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm">
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="toss"
-                defaultChecked
-                className="h-4 w-4"
-              />
-              <span className="font-medium text-gray-900">토스페이먼츠 (테스트)</span>
-            </label>
+            <div className="rounded-xl bg-slate-50 p-4 text-sm text-gray-900">
+              <p className="font-semibold">입금 계좌</p>
+              <p className="mt-1">국민은행 123456-12-345678 (주)민투어</p>
+              <p className="mt-2 text-muted-foreground">
+                ※ 주문자 성함과 동일한 이름으로 24시간 이내 입금해 주세요.
+              </p>
+            </div>
+            <ul className="list-disc space-y-1 pl-5 text-xs text-muted-foreground">
+              <li>입금이 늦어질 경우 고객센터로 미리 알려 주세요.</li>
+              <li>입금 확인 후 주문 상태가 ‘결제 대기’에서 ‘결제 완료’로 변경됩니다.</li>
+            </ul>
           </div>
 
           <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 text-sm">
@@ -173,7 +174,7 @@ export default async function CheckoutPage() {
               <Link href="/cart">장바구니로 돌아가기</Link>
             </Button>
             <Button type="submit" size="lg">
-              결제 진행하기
+              주문 신청하기
             </Button>
           </div>
         </form>
@@ -190,7 +191,7 @@ export default async function CheckoutPage() {
           ))}
         </ul>
         <div className="border-t border-dashed border-gray-200 pt-4 text-sm text-muted-foreground">
-          결제 완료 후 주문 내역 페이지에서 상세 정보를 확인할 수 있어요.
+          입금 확인 후 주문 내역 페이지와 알림으로 진행 상황을 안내해 드립니다.
         </div>
       </aside>
     </div>

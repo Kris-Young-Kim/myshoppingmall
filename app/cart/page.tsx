@@ -93,6 +93,7 @@ export default async function CartPage() {
             return (
               <div
                 key={item.id}
+                data-testid="cart-item"
                 className="flex flex-col gap-4 rounded-3xl border border-gray-100 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="flex-1 space-y-2">

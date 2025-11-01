@@ -50,13 +50,18 @@ export function AddToCartButton({
   };
 
   return (
-    <div className="flex flex-col items-stretch gap-1" aria-live="polite">
+    <div
+      className="flex flex-col items-stretch gap-1"
+      aria-live="polite"
+      data-testid="add-to-cart-container"
+    >
       <Button
         size={size}
         variant={isClicked ? 'outline' : variant}
         onClick={handleClick}
         disabled={isPending}
         className={className}
+        data-testid="add-to-cart-button"
       >
         {isPending ? '담는 중…' : isClicked ? '장바구니에 담겼어요!' : '장바구니 담기'}
       </Button>

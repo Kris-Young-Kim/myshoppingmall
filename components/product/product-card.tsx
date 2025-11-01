@@ -45,6 +45,7 @@ export function ProductCard({
 
   return (
     <article
+      data-testid="product-card"
       className={cn(
         "group relative flex h-full flex-col overflow-hidden rounded-3xl border border-transparent bg-white shadow-lg transition-all duration-300 hover:border-blue-200 hover:shadow-2xl",
         className,
