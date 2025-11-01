@@ -34,7 +34,7 @@
   - [x] Vercel 배포 및 기본 모니터링 설정
     - `vercel --prod` 후 Analytics 대시보드와 Supabase 로그 패널 주기적 확인
     - 입금 확인 후 수동으로 주문 상태를 갱신하는 체크리스트 마련
-- [ ] 지원 작업 & 문서화
-  - [ ] PRD 대비 구현 범위 체크리스트 유지
-  - [ ] README 업데이트 및 운영 가이드 작성
-  - [ ] MVP 성공 지표 대시보드(임시) 설계
+- [x] 지원 작업 & 문서화
+  - [x] PRD 대비 구현 범위 체크리스트 유지 (`docs/prd.md` 갱신)
+  - [x] README 업데이트 및 운영 가이드 작성 (`README.md`)
+  - [x] MVP 성공 지표 대시보드(임시) 설계 (`docs/reference/mvp-dashboard.md`)
