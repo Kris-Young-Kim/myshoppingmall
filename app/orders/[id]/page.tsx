@@ -5,29 +5,8 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import { createClerkSupabaseClient } from "@/lib/supabase/server";
-
-interface OrderRow {
-  id: string;
-  clerk_id: string;
-  total_amount: number | string;
-  status: string;
-  shipping_address: {
-    recipient: string;
-    phone: string;
-    postcode: string;
-    addressLine1: string;
-    addressLine2?: string | null;
-  } | null;
-  order_note: string | null;
-  created_at: string;
-  items: {
-    id: string;
-    product_name: string;
-    quantity: number;
-    price: number | string;
-  }[];
-}
+import { fetchOrderDetailForUser } from "@/lib/supabase/queries/orders";
+import { getOrderStatusBadgeClass, getOrderStatusLabel } from "@/types/order";
 
 function formatCurrency(value: number) {
   return new Intl.NumberFormat("ko-KR", {
@@ -49,48 +28,46 @@ export default async function OrderDetailPage({
 
   const { id } = await params;
 
-  const supabase = createClerkSupabaseClient();
+  console.group("[orders/id] render");
+  console.log("orderId", id);
 
-  const { data: order, error } = await supabase
-    .from("orders")
-    .select(
-      "id, clerk_id, total_amount, status, shipping_address, order_note, created_at, items:order_items(id, product_name, quantity, price)",
-    )
-    .eq("id", id)
-    .maybeSingle();
+  const order = await fetchOrderDetailForUser({ clerkId: userId, orderId: id });
 
-  if (error) {
-    console.error("주문 조회 실패", error);
+  if (!order) {
+    console.warn("[orders/id] 주문을 찾을 수 없습니다", { orderId: id });
+    console.groupEnd();
     notFound();
   }
 
-  if (!order || order.clerk_id !== userId) {
-    notFound();
-  }
+  console.log("order.status", order.status, "itemCount", order.items.length);
+  console.groupEnd();
 
-  const typedOrder = order as OrderRow;
-  const totalAmount = Number(typedOrder.total_amount ?? 0);
+  const totalAmount = Number(order.totalAmount ?? 0);
+  const badgeClass = getOrderStatusBadgeClass(order.status);
 
   return (
     <div className="mx-auto max-w-4xl space-y-10 py-16">
       <header className="space-y-2">
         <h1 className="text-3xl font-semibold">주문 상세</h1>
         <p className="text-sm text-muted-foreground">
-          주문 번호: {typedOrder.id} • {new Date(typedOrder.created_at).toLocaleString("ko-KR")}
+          주문 번호: {order.id} • {new Date(order.createdAt).toLocaleString("ko-KR")}
         </p>
+        <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${badgeClass}`}>
+          {getOrderStatusLabel(order.status)}
+        </span>
       </header>
 
       <section className="grid gap-6 rounded-3xl border border-gray-100 bg-white p-6 shadow-sm md:grid-cols-2">
         <div className="space-y-2 text-sm">
           <h2 className="text-base font-semibold text-gray-900">배송 정보</h2>
           <div className="rounded-2xl bg-slate-50 p-4">
-            <p className="font-medium text-gray-900">{typedOrder.shipping_address?.recipient}</p>
-            <p className="text-muted-foreground">{typedOrder.shipping_address?.phone}</p>
+            <p className="font-medium text-gray-900">{order.shippingAddress.recipient}</p>
+            <p className="text-muted-foreground">{order.shippingAddress.phone}</p>
             <p className="mt-2 text-muted-foreground">
-              ({typedOrder.shipping_address?.postcode}) {typedOrder.shipping_address?.addressLine1}
+              ({order.shippingAddress.postcode}) {order.shippingAddress.addressLine1}
             </p>
-            {typedOrder.shipping_address?.addressLine2 && (
-              <p className="text-muted-foreground">{typedOrder.shipping_address.addressLine2}</p>
+            {order.shippingAddress.addressLine2 && (
+              <p className="text-muted-foreground">{order.shippingAddress.addressLine2}</p>
             )}
           </div>
         </div>
@@ -98,7 +75,7 @@ export default async function OrderDetailPage({
         <div className="space-y-2 text-sm">
           <h2 className="text-base font-semibold text-gray-900">주문 메모</h2>
           <div className="rounded-2xl bg-slate-50 p-4 text-muted-foreground">
-            {typedOrder.order_note ?? '남겨진 메모가 없습니다.'}
+            {order.orderNote ?? "남겨진 메모가 없습니다."}
           </div>
         </div>
       </section>
@@ -106,12 +83,12 @@ export default async function OrderDetailPage({
       <section className="space-y-4 rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
         <h2 className="text-base font-semibold text-gray-900">주문 상품</h2>
         <div className="divide-y divide-gray-100 text-sm">
-          {typedOrder.items.map((item) => {
+          {order.items.map((item) => {
             const lineTotal = Number(item.price ?? 0) * item.quantity;
             return (
               <div key={item.id} className="flex items-center justify-between py-4">
                 <div>
-                  <p className="font-medium text-gray-900">{item.product_name}</p>
+                  <p className="font-medium text-gray-900">{item.productName}</p>
                   <p className="text-xs text-muted-foreground">수량 {item.quantity}개</p>
                 </div>
                 <p className="font-medium text-gray-900">{formatCurrency(lineTotal)}</p>
@@ -131,7 +108,7 @@ export default async function OrderDetailPage({
           <Link href="/products">쇼핑 계속하기</Link>
         </Button>
         <Button asChild variant="ghost">
-          <Link href="/orders">주문 목록 보기 (준비중)</Link>
+          <Link href="/mypage">마이페이지로 돌아가기</Link>
         </Button>
       </div>
     </div>

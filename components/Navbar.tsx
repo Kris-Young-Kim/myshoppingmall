@@ -8,6 +8,7 @@ const navItems = [
   { href: "/products", label: "상품" },
   { href: "/auth-test", label: "인증 테스트" },
   { href: "/storage-test", label: "스토리지" },
+  { href: "/mypage", label: "마이페이지" },
 ];
 
 const Navbar = () => {
