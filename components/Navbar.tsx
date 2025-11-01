@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 const navItems = [
   { href: "/", label: "홈" },
   { href: "/products", label: "상품" },
-  { href: "/auth-test", label: "인증 테스트" },
-  { href: "/storage-test", label: "스토리지" },
+  { href: "/cart", label: "장바구니" },
   { href: "/mypage", label: "마이페이지" },
 ];
 
