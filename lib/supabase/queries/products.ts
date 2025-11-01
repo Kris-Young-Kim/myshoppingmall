@@ -29,6 +29,7 @@ interface ProductRow {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  thumbnail_url?: string | null;
   gallery_images?: string[] | null;
   highlight_tags?: string[] | null;
 }
@@ -56,6 +57,7 @@ function transformRowToSummary(row: ProductRow): ProductSummary {
     isActive: row.is_active,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    thumbnailUrl: row.thumbnail_url ?? null,
   };
 }
 
@@ -70,6 +72,7 @@ function transformRowToDetail(row: ProductRow): ProductDetail {
     isActive: row.is_active,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    thumbnailUrl: row.thumbnail_url ?? null,
     galleryImages: row.gallery_images ?? undefined,
     highlightTags: row.highlight_tags ?? undefined,
   };
@@ -106,7 +109,7 @@ export async function fetchProductSummaries(
   let query = supabase
     .from("products")
     .select(
-      "id, name, description, price, category, stock_quantity, is_active, created_at, updated_at",
+      "id, name, description, price, category, stock_quantity, is_active, created_at, updated_at, thumbnail_url",
     )
     .eq("is_active", true);
 
@@ -154,7 +157,7 @@ export async function fetchProductDetail(
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, name, description, price, category, stock_quantity, is_active, created_at, updated_at",
+      "id, name, description, price, category, stock_quantity, is_active, created_at, updated_at, thumbnail_url, gallery_images",
     )
     .eq("id", productId)
     .single();

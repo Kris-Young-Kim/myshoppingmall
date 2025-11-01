@@ -43,13 +43,19 @@ export function CategoryFilter({
   query = {},
 }: CategoryFilterProps) {
   const sortedCategories = [...categories].sort((a, b) => a.localeCompare(b));
+  const baseButtonClass = "rounded-full px-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow focus-visible:ring-2 focus-visible:ring-offset-0 focus-visible:ring-slate-200/80";
+  const activeClass = "bg-slate-900 text-white border-slate-900 hover:bg-slate-800";
+  const inactiveClass = "bg-white/90 text-slate-900 border-white/40 hover:bg-white";
 
   return (
     <div className="flex flex-wrap gap-2">
       <Button
-        variant={selectedCategory ? "outline" : "default"}
+        variant="outline"
         size="sm"
-        className={cn("rounded-full px-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow")}
+        className={cn(
+          baseButtonClass,
+          selectedCategory ? inactiveClass : activeClass,
+        )}
         asChild
       >
         <Link href={buildHref(undefined, basePath, query)}>전체</Link>
@@ -60,9 +66,9 @@ export function CategoryFilter({
         return (
           <Button
             key={category}
-            variant={isActive ? "default" : "outline"}
+            variant="outline"
             size="sm"
-            className="rounded-full px-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow"
+            className={cn(baseButtonClass, isActive ? activeClass : inactiveClass)}
             asChild
           >
             <Link href={buildHref(category, basePath, query)}>

@@ -78,7 +78,7 @@ export default async function ProductDetailPage({
           </p>
         )}
         <div className="flex flex-wrap items-center gap-4 text-lg font-semibold">
-          <span>{currencyFormatter.format(product.price)}</span>
+          <span>{`${currencyFormatter.format(product.price)}부터`}</span>
           <span className="text-sm text-slate-200/70">
             재고 {product.stockQuantity.toLocaleString("ko-KR")}
           </span>

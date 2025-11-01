@@ -55,6 +55,9 @@ export interface Product {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  thumbnailUrl?: string | null;
+  galleryImages?: string[] | null;
+  highlightTags?: string[] | null;
 }
 
 export type ProductSummary = Pick<
@@ -69,7 +72,7 @@ export type ProductSummary = Pick<
   | "updatedAt"
 > & {
   description: string | null;
-  thumbnailUrl?: string;
+  thumbnailUrl?: string | null;
 };
 
 export interface ProductFilterParams {
@@ -83,7 +86,6 @@ export interface ProductFilterParams {
 }
 
 export interface ProductDetail extends Product {
-  galleryImages?: string[];
-  highlightTags?: string[];
+  galleryImages?: string[] | null;
+  highlightTags?: string[] | null;
 }
-

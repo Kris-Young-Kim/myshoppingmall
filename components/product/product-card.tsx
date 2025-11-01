@@ -112,7 +112,7 @@ export function ProductCard({
 
         <div className="mt-auto flex items-center justify-between gap-3 pt-2">
           <span className="text-xl font-bold text-gray-900">
-            {currencyFormatter.format(product.price)}
+            {`${currencyFormatter.format(product.price)}부터`}
           </span>
           <AddToCartButton
             productId={product.id}
