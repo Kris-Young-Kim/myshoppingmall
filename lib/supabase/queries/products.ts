@@ -154,7 +154,7 @@ export async function fetchProductDetail(
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, name, description, price, category, stock_quantity, is_active, created_at, updated_at, gallery_images, highlight_tags",
+      "id, name, description, price, category, stock_quantity, is_active, created_at, updated_at",
     )
     .eq("id", productId)
     .single();
