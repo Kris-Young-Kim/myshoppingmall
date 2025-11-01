@@ -4,7 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import { createOrderAction } from "@/actions/cart";
+import { initiateTossPaymentAction } from "@/actions/payments";
 import { Button } from "@/components/ui/button";
 import { createClerkSupabaseClient } from "@/lib/supabase/server";
 
@@ -64,7 +64,7 @@ export default async function CheckoutPage() {
           </p>
         </div>
 
-        <form action={createOrderAction} className="space-y-6">
+        <form action={initiateTossPaymentAction} className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor="recipient">
@@ -144,6 +144,23 @@ export default async function CheckoutPage() {
             />
           </div>
 
+          <div className="space-y-4 rounded-2xl border border-dashed border-gray-200 p-4">
+            <h2 className="text-base font-semibold text-gray-900">결제 수단</h2>
+            <p className="text-sm text-muted-foreground">
+              토스페이먼츠 테스트 모드로 결제가 진행됩니다. 결제 페이지에서 결제를 완료하거나 취소할 수 있습니다.
+            </p>
+            <label className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm">
+              <input
+                type="radio"
+                name="paymentMethod"
+                value="toss"
+                defaultChecked
+                className="h-4 w-4"
+              />
+              <span className="font-medium text-gray-900">토스페이먼츠 (테스트)</span>
+            </label>
+          </div>
+
           <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 text-sm">
             <span className="text-muted-foreground">주문 예정 금액</span>
             <span className="text-base font-semibold text-gray-900">
@@ -156,7 +173,7 @@ export default async function CheckoutPage() {
               <Link href="/cart">장바구니로 돌아가기</Link>
             </Button>
             <Button type="submit" size="lg">
-              주문 확정하기
+              결제 진행하기
             </Button>
           </div>
         </form>

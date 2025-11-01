@@ -1,3 +1,4 @@
+
 'use server';
 
 import { auth } from '@clerk/nextjs/server';
@@ -5,9 +6,9 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 import { createClerkSupabaseClient } from '@/lib/supabase/server';
-import { checkoutSchema } from '@/types/order';
+import { checkoutSchema, type CheckoutSchema } from '@/types/order';
 
-async function ensureUserId(): Promise<string> {
+export async function requireUserId(): Promise<string> {
   const { userId } = await auth();
   if (!userId) {
     throw new Error('로그인이 필요합니다.');
@@ -16,7 +17,7 @@ async function ensureUserId(): Promise<string> {
 }
 
 export async function addCartItem(productId: string, quantity = 1) {
-  const userId = await ensureUserId();
+  const userId = await requireUserId();
   const supabase = createClerkSupabaseClient();
 
   console.group('[cart] addCartItem');
@@ -82,7 +83,7 @@ export async function addToCartAction(input: { productId: string; quantity?: num
 }
 
 export async function updateCartItemQuantity(cartItemId: string, quantity: number) {
-  const userId = await ensureUserId();
+  const userId = await requireUserId();
   const supabase = createClerkSupabaseClient();
 
   console.group('[cart] updateCartItemQuantity');
@@ -122,7 +123,7 @@ export async function updateCartItemQuantityAction(formData: FormData) {
 }
 
 export async function removeCartItem(cartItemId: string) {
-  const userId = await ensureUserId();
+  const userId = await requireUserId();
   const supabase = createClerkSupabaseClient();
 
   console.group('[cart] removeCartItem');
@@ -153,28 +154,51 @@ export async function removeCartItemAction(formData: FormData) {
   await removeCartItem(cartItemId);
 }
 
-export async function createOrderAction(formData: FormData) {
-  const userId = await ensureUserId();
+type RawCartProduct = {
+  id: string;
+  name: string;
+  price: number | string;
+};
+
+type RawCartRow = {
+  id: string;
+  quantity: number;
+  product: RawCartProduct | null;
+};
+
+export interface NormalizedCartItem {
+  cartItemId: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+}
+
+export interface CreateOrderDraftInput {
+  userId: string;
+  shipping: CheckoutSchema;
+  orderNote?: string;
+  clearCart?: boolean;
+}
+
+export interface CreateOrderDraftResult {
+  orderId: string;
+  totalAmount: number;
+  orderName: string;
+  items: NormalizedCartItem[];
+}
+
+export async function createOrderDraft({
+  userId,
+  shipping,
+  orderNote,
+  clearCart = true,
+}: CreateOrderDraftInput): Promise<CreateOrderDraftResult> {
   const supabase = createClerkSupabaseClient();
 
-  console.group('[order] createOrder');
+  console.group('[order] createOrderDraft');
 
-  const parsed = checkoutSchema.safeParse({
-    recipient: formData.get('recipient'),
-    phone: formData.get('phone'),
-    postcode: formData.get('postcode'),
-    addressLine1: formData.get('addressLine1'),
-    addressLine2: formData.get('addressLine2') ?? undefined,
-    orderNote: formData.get('orderNote') ?? undefined,
-  });
-
-  if (!parsed.success) {
-    console.error('주문 입력 검증 실패', parsed.error.flatten());
-    console.groupEnd();
-    throw new Error('주문 입력값이 올바르지 않습니다.');
-  }
-
-  const { data: cartItems, error: cartError } = await supabase
+  const { data: cartRows, error: cartError } = await supabase
     .from('cart_items')
     .select('id, quantity, product:products(id, name, price)')
     .eq('clerk_id', userId);
@@ -185,22 +209,16 @@ export async function createOrderAction(formData: FormData) {
     throw cartError;
   }
 
-  if (!cartItems || cartItems.length === 0) {
+  const typedCart = (cartRows as unknown as RawCartRow[]) ?? [];
+
+  if (typedCart.length === 0) {
     console.warn('장바구니가 비어 있습니다.');
     console.groupEnd();
     throw new Error('장바구니가 비어 있습니다.');
   }
 
-  type CartResponseItem = {
-    id: string;
-    quantity: number;
-    product: { id: string; name: string; price: number | string } | null;
-  };
-
-  const typedCartItems = cartItems as unknown as CartResponseItem[];
-
   let totalAmount = 0;
-  const normalizedItems = typedCartItems.map((item) => {
+  const normalizedItems: NormalizedCartItem[] = typedCart.map((item) => {
     if (!item.product) {
       throw new Error('상품 정보가 유효하지 않습니다.');
     }
@@ -221,20 +239,22 @@ export async function createOrderAction(formData: FormData) {
     };
   });
 
+  const shippingAddress = {
+    recipient: shipping.recipient,
+    phone: shipping.phone,
+    postcode: shipping.postcode,
+    addressLine1: shipping.addressLine1,
+    addressLine2: shipping.addressLine2 ?? null,
+  };
+
   const { data: order, error: orderError } = await supabase
     .from('orders')
     .insert({
       clerk_id: userId,
       total_amount: totalAmount,
       status: 'pending',
-      shipping_address: {
-        recipient: parsed.data.recipient,
-        phone: parsed.data.phone,
-        postcode: parsed.data.postcode,
-        addressLine1: parsed.data.addressLine1,
-        addressLine2: parsed.data.addressLine2 ?? null,
-      },
-      order_note: parsed.data.orderNote ?? null,
+      shipping_address: shippingAddress,
+      order_note: orderNote ?? null,
     })
     .select('id')
     .single();
@@ -263,18 +283,58 @@ export async function createOrderAction(formData: FormData) {
     throw insertItemsError;
   }
 
-  const { error: clearError } = await supabase
-    .from('cart_items')
-    .delete()
-    .in('id', normalizedItems.map((item) => item.cartItemId));
+  if (clearCart) {
+    const { error: clearError } = await supabase
+      .from('cart_items')
+      .delete()
+      .in('id', normalizedItems.map((item) => item.cartItemId));
 
-  if (clearError) {
-    console.error('장바구니 비우기 실패', clearError);
+    if (clearError) {
+      console.error('장바구니 비우기 실패', clearError);
+    }
   }
 
-  console.groupEnd();
-  revalidatePath('/cart');
-  revalidatePath(`/orders/${order.id}`);
+  const orderName = normalizedItems[0]?.productName ?? `주문 ${order.id}`;
 
-  redirect(`/orders/${order.id}`);
+  console.groupEnd();
+  return {
+    orderId: order.id,
+    totalAmount,
+    orderName,
+    items: normalizedItems,
+  };
+}
+
+export async function createOrderAction(formData: FormData) {
+  const userId = await requireUserId();
+
+  console.group('[order] createOrderAction');
+
+  const parsed = checkoutSchema.safeParse({
+    recipient: formData.get('recipient'),
+    phone: formData.get('phone'),
+    postcode: formData.get('postcode'),
+    addressLine1: formData.get('addressLine1'),
+    addressLine2: formData.get('addressLine2') ?? undefined,
+    orderNote: formData.get('orderNote') ?? undefined,
+  });
+
+  if (!parsed.success) {
+    console.error('주문 입력 검증 실패', parsed.error.flatten());
+    console.groupEnd();
+    throw new Error('주문 입력값이 올바르지 않습니다.');
+  }
+
+  const result = await createOrderDraft({
+    userId,
+    shipping: parsed.data,
+    orderNote: parsed.data.orderNote,
+    clearCart: true,
+  });
+
+  revalidatePath('/cart');
+  revalidatePath(`/orders/${result.orderId}`);
+  console.groupEnd();
+
+  redirect(`/orders/${result.orderId}`);
 }
