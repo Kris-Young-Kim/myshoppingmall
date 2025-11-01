@@ -11,7 +11,6 @@ interface AddToCartButtonProps {
   className?: string;
   variant?: ComponentProps<typeof Button>["variant"];
   size?: ComponentProps<typeof Button>["size"];
-  onAdded?: () => void;
 }
 
 const RESET_BADGE_TIMEOUT = 2500;
@@ -22,7 +21,6 @@ export function AddToCartButton({
   className,
   variant = "default",
   size = "sm",
-  onAdded,
 }: AddToCartButtonProps) {
   const [isPending, startTransition] = useTransition();
   const [isClicked, setIsClicked] = useState(false);
@@ -44,7 +42,6 @@ export function AddToCartButton({
         await addToCartAction({ productId, quantity });
         setIsClicked(true);
         setErrorMessage(null);
-        onAdded?.();
       } catch (error) {
         console.error('[cart] add failed', error);
         setErrorMessage('장바구니 담기에 실패했어요. 다시 시도해 주세요.');

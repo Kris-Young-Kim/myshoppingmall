@@ -134,7 +134,6 @@ export default async function ProductDetailPage({
               quantity={1}
               size="lg"
               className="w-full justify-center gap-2"
-              onAdded={() => console.log("[products/id] added to cart")}
             />
             <Button
               size="lg"
