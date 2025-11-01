@@ -160,6 +160,12 @@ export async function fetchProductDetail(
     .single();
 
   if (error) {
+    if (error.code === "PGRST116") {
+      console.warn("[products] 상품을 찾을 수 없습니다.", { productId });
+      console.groupEnd();
+      return null;
+    }
+
     console.error("상품 상세 조회 실패", error);
     console.groupEnd();
     throw error;
