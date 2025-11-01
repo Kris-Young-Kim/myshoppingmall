@@ -16,25 +16,29 @@
  */
 
 export const productCategories = [
-  "electronics",
-  "clothing",
-  "books",
-  "food",
-  "sports",
-  "beauty",
-  "home",
+  "travel_free",
+  "travel_domestic",
+  "travel_package",
+  "travel_family",
+  "travel_theme",
+  "travel_honeymoon",
+  "travel_custom",
+  "travel_wellness",
+  "travel_culture",
 ] as const;
 
 export type ProductCategory = (typeof productCategories)[number];
 
 export const productCategoryLabels: Record<ProductCategory, string> = {
-  electronics: "전자제품",
-  clothing: "의류",
-  books: "도서",
-  food: "식품",
-  sports: "스포츠",
-  beauty: "뷰티",
-  home: "생활/가정",
+  travel_free: "자유여행",
+  travel_domestic: "국내여행",
+  travel_package: "패키지",
+  travel_family: "가족여행",
+  travel_theme: "테마여행",
+  travel_honeymoon: "허니문",
+  travel_custom: "맞춤여행",
+  travel_wellness: "웰니스",
+  travel_culture: "문화탐방",
 };
 
 export function getProductCategoryLabel(category: string): string {
