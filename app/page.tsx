@@ -62,8 +62,8 @@ export default async function ShopHomePage() {
   ];
 
   return (
-    <div className="relative -mx-4 space-y-20 rounded-[32px] bg-gradient-to-b from-[#050c1e] via-[#061128] to-[#030813] px-4 pb-24 pt-12 text-slate-100 shadow-[0_48px_140px_rgba(5,12,30,0.6)] sm:mx-0 sm:px-8 lg:px-12">
-      <section className="relative overflow-hidden rounded-[36px] border border-white/10 bg-gradient-to-br from-[#101f3e] via-[#0a162d] to-[#050b18] px-8 py-16 shadow-2xl">
+    <div className="relative -mx-4 space-y-20 rounded-[32px] bg-linear-to-b from-[#050c1e] via-[#061128] to-[#030813] px-4 pb-24 pt-12 text-slate-100 shadow-[0_48px_140px_rgba(5,12,30,0.6)] sm:mx-0 sm:px-8 lg:px-12">
+      <section className="relative overflow-hidden rounded-[36px] border border-white/10 bg-linear-to-br from-[#101f3e] via-[#0a162d] to-[#050b18] px-8 py-16 shadow-2xl">
         <div
           className="absolute inset-0 opacity-25"
           style={{
@@ -222,7 +222,7 @@ export default async function ShopHomePage() {
               <div
                 className={cn(
                   "absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-30",
-                  `bg-gradient-to-br ${theme.accent}`,
+                  `bg-linear-to-br ${theme.accent}`,
                 )}
               />
               <div className="relative space-y-3">
