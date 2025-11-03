@@ -57,8 +57,7 @@ export default async function ShopHomePage() {
     {
       icon: Sparkle,
       title: "안전한 예약과 결제",
-          description:
-            "전담 매니저가 입금 확인 후 안전하게 일정을 확정해 드려요.",
+      description: "전담 매니저가 입금 확인 후 안전하게 일정을 확정해 드려요.",
     },
   ];
 
@@ -82,11 +81,16 @@ export default async function ShopHomePage() {
             </span>
             <div className="space-y-5">
               <h1 className="text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-[3.25rem] lg:leading-[1.15]">
-                지금 떠나고 싶은 여행지, 민투어가 네이비 밤하늘처럼 설레게 안내해요
+                지금 떠나고 싶은 여행지,
+                <br className="hidden sm:block" />
+                민투어가 네이비 밤하늘처럼
+                <br className="hidden lg:block" />
+                설레게 안내해요
               </h1>
               <p className="text-base leading-7 text-slate-200/85 md:text-lg">
-                계절 특가와 맞춤 일정이 준비된 프리미엄 여행 컬렉션. 원하는 여정을
-                선택하면 항공, 숙소, 현지 투어까지 한 번에 제안해 드릴게요.
+                계절 특가와 맞춤 일정이 준비된 프리미엄 여행 컬렉션. 원하는
+                여정을 선택하면 항공, 숙소, 현지 투어까지 한 번에 제안해
+                드릴게요.
               </p>
             </div>
             <div className="flex flex-wrap gap-4">
@@ -172,7 +176,8 @@ export default async function ShopHomePage() {
             ))
           ) : (
             <div className="col-span-full rounded-3xl border border-dashed border-white/30 bg-[#0f1f3f]/60 p-10 text-center text-slate-300/90">
-              현재 등록된 HOT SALE 상품이 없습니다. Supabase 콘솔에서 상품을 추가해 주세요.
+              현재 등록된 HOT SALE 상품이 없습니다. Supabase 콘솔에서 상품을
+              추가해 주세요.
             </div>
           )}
         </div>
@@ -227,9 +232,7 @@ export default async function ShopHomePage() {
                 <h3 className="text-xl font-semibold text-slate-50">
                   {theme.title}
                 </h3>
-                <p className="text-sm text-slate-300/90">
-                  {theme.description}
-                </p>
+                <p className="text-sm text-slate-300/90">{theme.description}</p>
                 <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#8ddcff]">
                   테마 상품 보기
                   <ArrowRight className="h-4 w-4" />
@@ -247,7 +250,8 @@ export default async function ShopHomePage() {
               이번 주 인기 여행
             </h2>
             <p className="text-sm text-slate-300/85">
-              방금 업데이트된 여행 상품을 다크 네이비 그리드로 한눈에 살펴보세요.
+              방금 업데이트된 여행 상품을 다크 네이비 그리드로 한눈에
+              살펴보세요.
             </p>
           </header>
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

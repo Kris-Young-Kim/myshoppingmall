@@ -1,7 +1,6 @@
-import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { NavbarAuth } from "./navbar-auth";
 
 const navItems = [
   { href: "/", label: "홈" },
@@ -27,16 +26,7 @@ const Navbar = () => {
           </Link>
         ))}
       </nav>
-      <div className="flex items-center gap-3">
-        <SignedOut>
-          <SignInButton mode="modal">
-            <Button size="sm">로그인</Button>
-          </SignInButton>
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
-      </div>
+      <NavbarAuth />
     </header>
   );
 };
