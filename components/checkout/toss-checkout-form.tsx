@@ -1,13 +1,11 @@
 "use client";
 
-import { useTransition, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useTransition, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { TossPaymentWidget, requestPayment } from "@/components/payment/toss-payment-widget";
+import { TossPaymentButton } from "@/components/payment/toss-payment-window";
 import { createOrderDraftAction } from "@/actions/payments";
 import { useToast } from "@/hooks/use-toast";
-import { PaymentWidgetInstance } from "@tosspayments/payment-widget-sdk";
 
 interface TossCheckoutFormProps {
   subtotal: number;
@@ -30,7 +28,7 @@ function formatCurrency(value: number) {
 
 /**
  * @file toss-checkout-form.tsx
- * @description Toss Payments를 사용한 체크아웃 폼 (결제위젯 포함)
+ * @description Toss Payments API 개별 연동을 사용한 체크아웃 폼 (결제창 방식)
  */
 export function TossCheckoutForm({
   subtotal,
@@ -39,52 +37,44 @@ export function TossCheckoutForm({
   customerKey,
 }: TossCheckoutFormProps) {
   const [isPending, startTransition] = useTransition();
-  const [isPaymentReady, setIsPaymentReady] = useState(false);
-  const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
+  const [orderData, setOrderData] = useState<{
+    orderId: string;
+    orderName: string;
+    totalAmount: number;
+    customerName: string;
+    customerPhone?: string;
+  } | null>(null);
   const { toast } = useToast();
 
   const handleSubmit = async (formData: FormData) => {
-    if (!isPaymentReady || !paymentWidgetRef.current) {
-      toast({
-        title: "결제위젯이 준비되지 않았습니다",
-        description: "잠시 후 다시 시도해 주세요.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     startTransition(async () => {
       try {
-        console.group("[checkout] 주문 생성 및 결제 요청");
+        console.group("[checkout] 주문 생성");
         
-        // 1. 주문 생성
+        // 주문 생성
         const orderResult = await createOrderDraftAction(formData);
 
         console.log("주문 생성 완료", { orderId: orderResult.orderId, amount: orderResult.totalAmount });
-
-        // 2. 결제 요청
-        const successUrl = `${window.location.origin}/payments/success`;
-        const failUrl = `${window.location.origin}/payments/fail`;
-
-        const paymentResult = await requestPayment(
-          paymentWidgetRef.current!,
-          orderResult.orderId,
-          orderResult.orderName,
-          orderResult.totalAmount,
-          customerKey,
-          successUrl,
-          failUrl
-        );
-
-        console.log("결제 요청 성공", paymentResult);
         console.groupEnd();
 
-        // 결제 요청 성공 시 자동으로 리다이렉트됨
+        // 주문 정보 저장 (결제 버튼에서 사용)
+        setOrderData({
+          orderId: orderResult.orderId,
+          orderName: orderResult.orderName,
+          totalAmount: orderResult.totalAmount,
+          customerName: formData.get("recipient")?.toString() || "고객",
+          customerPhone: formData.get("phone")?.toString(),
+        });
+
+        toast({
+          title: "주문 정보가 준비되었습니다",
+          description: "결제하기 버튼을 눌러 결제를 진행해 주세요.",
+        });
       } catch (error) {
-        console.error("[checkout] 주문/결제 실패", error);
+        console.error("[checkout] 주문 생성 실패", error);
         console.groupEnd();
         toast({
-          title: "결제 실패",
+          title: "주문 생성 실패",
           description: error instanceof Error ? error.message : "다시 시도해 주세요.",
           variant: "destructive",
         });
@@ -92,9 +82,13 @@ export function TossCheckoutForm({
     });
   };
 
-  const handlePaymentWidgetReady = (widget: PaymentWidgetInstance) => {
-    paymentWidgetRef.current = widget;
-    setIsPaymentReady(true);
+  const handlePaymentError = (error: Error) => {
+    console.error("[checkout] 결제창 오류", error);
+    toast({
+      title: "결제 실패",
+      description: error.message,
+      variant: "destructive",
+    });
   };
 
   return (
@@ -194,20 +188,29 @@ export function TossCheckoutForm({
             />
           </div>
 
-          {/* 결제위젯 */}
-          <TossPaymentWidget
-            clientKey={clientKey}
-            customerKey={customerKey}
-            amount={subtotal}
-            onReady={handlePaymentWidgetReady}
-            onError={(error) => {
-              toast({
-                title: "결제위젯 로드 실패",
-                description: error.message,
-                variant: "destructive",
-              });
-            }}
-          />
+          {/* 주문 생성 완료 후 결제 버튼 표시 */}
+          {orderData && (
+            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-xl font-semibold text-gray-900">결제하기</h2>
+              <p className="mb-4 text-sm text-muted-foreground">
+                주문 정보가 준비되었습니다. 결제하기 버튼을 눌러 결제를 진행해 주세요.
+              </p>
+              <TossPaymentButton
+                clientKey={clientKey}
+                amount={orderData.totalAmount}
+                orderId={orderData.orderId}
+                orderName={orderData.orderName}
+                customerName={orderData.customerName}
+                customerEmail={customerKey.includes("@") ? customerKey : undefined}
+                customerPhone={orderData.customerPhone}
+                successUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/payments/success`}
+                failUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/payments/fail`}
+                onError={handlePaymentError}
+                disabled={isPending}
+                className="w-full"
+              />
+            </div>
+          )}
 
           <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4 text-sm">
             <span className="text-muted-foreground">주문 예정 금액</span>
@@ -220,8 +223,8 @@ export function TossCheckoutForm({
             <Button asChild variant="outline" disabled={isPending}>
               <Link href="/cart">장바구니로 돌아가기</Link>
             </Button>
-            <Button type="submit" size="lg" disabled={isPending || !isPaymentReady}>
-              {isPending ? "처리 중..." : isPaymentReady ? "결제하기" : "결제위젯 준비 중..."}
+            <Button type="submit" size="lg" disabled={isPending || !!orderData}>
+              {isPending ? "주문 정보 준비 중..." : orderData ? "결제 준비 완료" : "주문 정보 입력하기"}
             </Button>
           </div>
         </form>

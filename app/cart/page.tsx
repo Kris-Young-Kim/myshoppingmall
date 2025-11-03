@@ -5,6 +5,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { CartItemActions } from "@/components/cart/cart-item-actions";
+import { CheckoutButton } from "@/components/cart/checkout-button";
 import { Button } from "@/components/ui/button";
 import { createClerkSupabaseClient } from "@/lib/supabase/server";
 
@@ -142,9 +143,11 @@ export default async function CartPage() {
           <span>{formatCurrency(subtotal)}</span>
         </div>
 
-        <Button asChild size="lg" className="w-full">
-          <Link href="/checkout">결제 진행하기</Link>
-        </Button>
+        <CheckoutButton
+          itemCount={normalizedItems.length}
+          subtotal={subtotal}
+          className="w-full"
+        />
 
         <Button asChild variant="ghost" size="sm" className="w-full">
           <Link href="/products">쇼핑 계속하기</Link>
