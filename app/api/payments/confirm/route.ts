@@ -63,6 +63,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 주문 상태 검증: pending 상태인지 확인
+    if (order.status !== "pending") {
+      console.error("주문 상태 오류", {
+        현재_상태: order.status,
+        주문_ID: orderId,
+      });
+      return NextResponse.json(
+        {
+          error:
+            order.status === "confirmed"
+              ? "이미 처리된 주문입니다."
+              : "처리할 수 없는 주문 상태입니다.",
+        },
+        { status: 400 }
+      );
+    }
+
     // 금액 검증
     if (Number(order.total_amount) !== Number(amount)) {
       console.error("금액 불일치", {
@@ -125,6 +142,28 @@ export async function POST(request: NextRequest) {
     if (updateError) {
       console.error("주문 상태 업데이트 실패", updateError);
       // 결제는 승인되었지만 주문 상태 업데이트 실패 - 수동 처리 필요
+      console.groupEnd();
+      return NextResponse.json(
+        {
+          error: "주문 상태 업데이트에 실패했습니다. 고객센터로 문의해 주세요.",
+        },
+        { status: 500 }
+      );
+    }
+
+    // 결제 승인 성공 시 장바구니 비우기
+    console.log("[payments/confirm] 장바구니 비우기 시작");
+    const { error: cartError } = await supabase
+      .from("cart_items")
+      .delete()
+      .eq("clerk_id", userId);
+
+    if (cartError) {
+      console.error("장바구니 비우기 실패", cartError);
+      // 장바구니 비우기는 실패해도 결제는 성공했으므로 경고만 남기고 계속 진행
+      console.warn("[payments/confirm] 장바구니 비우기 실패 - 수동 정리 필요");
+    } else {
+      console.log("[payments/confirm] 장바구니 비우기 성공");
     }
 
     console.groupEnd();
