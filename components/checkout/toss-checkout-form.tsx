@@ -40,9 +40,7 @@ export function TossCheckoutForm({
 }: TossCheckoutFormProps) {
   const [isPending, startTransition] = useTransition();
   const [isPaymentReady, setIsPaymentReady] = useState(false);
-  const [orderId, setOrderId] = useState<string | null>(null);
   const paymentWidgetRef = useRef<PaymentWidgetInstance | null>(null);
-  const router = useRouter();
   const { toast } = useToast();
 
   const handleSubmit = async (formData: FormData) => {
@@ -61,10 +59,8 @@ export function TossCheckoutForm({
         
         // 1. 주문 생성
         const orderResult = await createOrderDraftAction(formData);
-        const generatedOrderId = orderResult.orderId;
-        setOrderId(generatedOrderId);
 
-        console.log("주문 생성 완료", { orderId: generatedOrderId, amount: orderResult.totalAmount });
+        console.log("주문 생성 완료", { orderId: orderResult.orderId, amount: orderResult.totalAmount });
 
         // 2. 결제 요청
         const successUrl = `${window.location.origin}/payments/success`;
@@ -72,7 +68,7 @@ export function TossCheckoutForm({
 
         const paymentResult = await requestPayment(
           paymentWidgetRef.current!,
-          generatedOrderId,
+          orderResult.orderId,
           orderResult.orderName,
           orderResult.totalAmount,
           customerKey,
@@ -203,8 +199,6 @@ export function TossCheckoutForm({
             clientKey={clientKey}
             customerKey={customerKey}
             amount={subtotal}
-            orderName={`주문 ${new Date().toISOString()}`}
-            orderId="temp-order-id"
             onReady={handlePaymentWidgetReady}
             onError={(error) => {
               toast({

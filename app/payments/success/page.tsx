@@ -91,7 +91,6 @@ export default function PaymentSuccessPage() {
     confirmPayment();
   }, [searchParams, router, toast]);
 
-  const paymentKey = searchParams.get("paymentKey");
   const orderId = searchParams.get("orderId");
   const amount = searchParams.get("amount");
 

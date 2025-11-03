@@ -30,7 +30,6 @@ function formatCurrency(value: number) {
  */
 export function CheckoutForm({ subtotal, cartItems }: CheckoutFormProps) {
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
   const { toast } = useToast();
 
   const handleSubmit = async (formData: FormData) => {
@@ -163,7 +162,7 @@ export function CheckoutForm({ subtotal, cartItems }: CheckoutFormProps) {
             </div>
             <ul className="list-disc space-y-1 pl-5 text-xs text-muted-foreground">
               <li>입금이 늦어질 경우 고객센터로 미리 알려 주세요.</li>
-              <li>입금 확인 후 주문 상태가 '결제 대기'에서 '결제 완료'로 변경됩니다.</li>
+              <li>입금 확인 후 주문 상태가 &apos;결제 대기&apos;에서 &apos;결제 완료&apos;로 변경됩니다.</li>
             </ul>
           </div>
 

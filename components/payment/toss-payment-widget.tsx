@@ -14,8 +14,6 @@ interface TossPaymentWidgetProps {
   clientKey: string;
   customerKey: string;
   amount: number;
-  orderName: string;
-  orderId: string;
   onReady?: (widget: PaymentWidgetInstance) => void;
   onError?: (error: Error) => void;
 }
@@ -24,8 +22,6 @@ export function TossPaymentWidget({
   clientKey,
   customerKey,
   amount,
-  orderName,
-  orderId,
   onReady,
   onError,
 }: TossPaymentWidgetProps) {

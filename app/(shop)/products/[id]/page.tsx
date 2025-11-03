@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ShoppingCart } from "lucide-react";
 
 import {
   fetchProductDetail,
