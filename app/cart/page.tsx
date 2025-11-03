@@ -4,10 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
-import {
-  removeCartItemAction,
-  updateCartItemQuantityAction,
-} from "@/actions/cart";
+import { CartItemActions } from "@/components/cart/cart-item-actions";
 import { Button } from "@/components/ui/button";
 import { createClerkSupabaseClient } from "@/lib/supabase/server";
 
@@ -114,34 +111,10 @@ export default async function CartPage() {
                   <span className="text-base font-semibold text-gray-900">
                     {formatCurrency(lineTotal)}
                   </span>
-
-                  <form
-                    action={updateCartItemQuantityAction}
-                    className="flex items-center gap-2"
-                  >
-                    <input type="hidden" name="cartItemId" value={item.id} />
-                    <label className="text-xs text-muted-foreground" htmlFor={`quantity-${item.id}`}>
-                      수량
-                    </label>
-                    <input
-                      id={`quantity-${item.id}`}
-                      name="quantity"
-                      type="number"
-                      min={0}
-                      defaultValue={item.quantity}
-                      className="w-20 rounded-xl border border-gray-200 px-3 py-2 text-sm"
-                    />
-                    <Button type="submit" variant="outline" size="sm">
-                      적용
-                    </Button>
-                  </form>
-
-                  <form action={removeCartItemAction}>
-                    <input type="hidden" name="cartItemId" value={item.id} />
-                    <Button type="submit" variant="ghost" size="sm">
-                      삭제
-                    </Button>
-                  </form>
+                  <CartItemActions
+                    cartItemId={item.id}
+                    currentQuantity={item.quantity}
+                  />
                 </div>
               </div>
             );

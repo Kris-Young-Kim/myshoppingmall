@@ -4,6 +4,7 @@ import { useEffect, useState, useTransition, type ComponentProps } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { addToCartAction } from '@/actions/cart';
+import { useToast } from '@/hooks/use-toast';
 
 interface AddToCartButtonProps {
   productId: string;
@@ -25,6 +26,7 @@ export function AddToCartButton({
   const [isPending, startTransition] = useTransition();
   const [isClicked, setIsClicked] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!isClicked) return;
@@ -42,9 +44,19 @@ export function AddToCartButton({
         await addToCartAction({ productId, quantity });
         setIsClicked(true);
         setErrorMessage(null);
+        toast({
+          title: "장바구니에 추가되었습니다",
+          description: "장바구니 페이지에서 확인할 수 있어요.",
+        });
       } catch (error) {
         console.error('[cart] add failed', error);
-        setErrorMessage('장바구니 담기에 실패했어요. 다시 시도해 주세요.');
+        const errorMsg = '장바구니 담기에 실패했어요. 다시 시도해 주세요.';
+        setErrorMessage(errorMsg);
+        toast({
+          title: "장바구니 담기 실패",
+          description: errorMsg,
+          variant: "destructive",
+        });
       }
     });
   };
