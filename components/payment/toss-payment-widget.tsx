@@ -108,9 +108,11 @@ export function TossPaymentWidget({
           customerKeyValue: customerKey,
         });
         
+        // paymentWidget 변수를 try 블록 밖에서 선언하여 스코프 확장
+        let paymentWidget: PaymentWidgetInstance;
         try {
           // 검증된 trimmedKey 사용
-          const paymentWidget = await loadPaymentWidget(trimmedKey, customerKey);
+          paymentWidget = await loadPaymentWidget(trimmedKey, customerKey);
           paymentWidgetRef.current = paymentWidget;
           console.log("[payment-widget] loadPaymentWidget 성공");
         } catch (loadError) {
