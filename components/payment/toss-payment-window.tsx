@@ -72,6 +72,12 @@ export function openPaymentWindow({
 
       // Toss Payments SDK 로드
       console.log("[payment-window] loadTossPayments 호출 중...");
+      console.log("[payment-window] SDK 로드 파라미터:", {
+        clientKeyLength: trimmedKey.length,
+        clientKeyPrefix: trimmedKey.substring(0, 15),
+        isValidKey: trimmedKey.startsWith("test_ck_") || trimmedKey.startsWith("live_ck_"),
+      });
+      
       const tossPayments = await loadTossPayments(trimmedKey);
       console.log("[payment-window] loadTossPayments 성공");
 
@@ -135,8 +141,13 @@ export function TossPaymentButton({
 
   const handleClick = async () => {
     setIsLoading(true);
+    
+    console.group("[payment-window] 결제 버튼 클릭");
+    console.log("주문 정보:", { orderId, orderName, amount, customerName });
+    console.log("URL 정보:", { successUrl, failUrl });
+    
     try {
-      await openPaymentWindow({
+      const paymentWindowFn = openPaymentWindow({
         clientKey,
         amount,
         orderId,
@@ -148,11 +159,20 @@ export function TossPaymentButton({
         failUrl,
         onError: (error) => {
           setIsLoading(false);
+          console.error("[payment-window] onError 콜백 호출", error);
           onError?.(error);
         },
-      })();
+      });
+      
+      await paymentWindowFn();
+      
+      // 결제창이 열리면 로딩 상태 유지 (결제창이 닫힐 때까지)
+      // setIsLoading(false); // 주석 처리: 결제창이 열리는 동안 로딩 상태 유지
+      console.groupEnd();
     } catch (error) {
       setIsLoading(false);
+      console.error("[payment-window] handleClick 에러", error);
+      console.groupEnd();
       onError?.(error instanceof Error ? error : new Error(String(error)));
     }
   };

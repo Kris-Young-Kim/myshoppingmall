@@ -18,15 +18,19 @@
   - [x] 수동 입금 안내 UI와 서버 액션 구현
   - [x] 주문 상태 관리(입금 대기→확정) 운영 가이드 정리
   - [x] 결제 완료/취소 안내 문구 및 페이지 업데이트
-  - [x] Toss Payments V1 SDK 결제위젯 연동
-    - 결제위젯 컴포넌트 생성 (`components/payment/toss-payment-widget.tsx`)
-    - 체크아웃 폼에 결제위젯 통합 (`components/checkout/toss-checkout-form.tsx`)
+  - [x] Toss Payments V1 SDK API 개별 연동 (결제창 방식)
+    - 결제창 컴포넌트 생성 (`components/payment/toss-payment-window.tsx`)
+      - `@tosspayments/payment-sdk` 설치 및 결제창 열기 로직 구현
+      - API 개별 연동 키(`test_ck_` / `live_ck_`) 검증 및 사용
+    - 체크아웃 폼 수정 (`components/checkout/toss-checkout-form.tsx`)
+      - 결제위젯 방식에서 결제창 방식으로 전환
+      - 주문 생성 후 결제 버튼 표시 플로우 구현
     - 결제 승인 API 라우트 구현 (`app/api/payments/confirm/route.ts`)
     - 결제 성공/실패 페이지 생성 (`app/payments/success/page.tsx`, `app/payments/fail/page.tsx`)
-    - 주문 생성 후 결제위젯으로 결제 요청 및 승인 처리 완료
+    - 주문 생성 후 결제창으로 결제 요청 및 승인 처리 완료
     - 바로 구매 버튼 구현 (`components/cart/buy-now-button.tsx`)
       - 상품 상세 페이지에서 바로 구매 클릭 시 장바구니 추가 후 체크아웃 페이지로 이동
-      - 체크아웃 페이지에서 Toss Payments 결제위젯을 통해 바로 결제 가능
+      - 체크아웃 페이지에서 Toss Payments 결제창을 통해 바로 결제 가능
     - 장바구니 페이지 결제 버튼 연동 (`components/cart/checkout-button.tsx`)
       - 장바구니 페이지에서 "결제 진행하기" 버튼 클릭 시 체크아웃 페이지로 이동
       - 결제 플로우 시작 로그 추가 (장바구니 상품 수, 총 결제 금액 등)
