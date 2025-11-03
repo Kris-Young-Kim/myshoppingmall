@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { CheckoutForm } from "@/components/checkout/checkout-form";
+import { TossCheckoutForm } from "@/components/checkout/toss-checkout-form";
 import { createClerkSupabaseClient } from "@/lib/supabase/server";
 
 interface CartItemRow {
@@ -45,6 +45,22 @@ export default async function CheckoutPage() {
     return sum + price * item.quantity;
   }, 0);
 
-  return <CheckoutForm subtotal={subtotal} cartItems={normalized} />;
+  // Toss Payments 환경 변수
+  const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
+  if (!clientKey) {
+    throw new Error("NEXT_PUBLIC_TOSS_CLIENT_KEY 환경 변수가 설정되지 않았습니다.");
+  }
+
+  // customerKey는 Clerk userId 사용 (또는 별도로 생성)
+  const customerKey = userId;
+
+  return (
+    <TossCheckoutForm
+      subtotal={subtotal}
+      cartItems={normalized}
+      clientKey={clientKey}
+      customerKey={customerKey}
+    />
+  );
 }
 

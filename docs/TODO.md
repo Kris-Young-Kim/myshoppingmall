@@ -18,7 +18,16 @@
   - [x] 수동 입금 안내 UI와 서버 액션 구현
   - [x] 주문 상태 관리(입금 대기→확정) 운영 가이드 정리
   - [x] 결제 완료/취소 안내 문구 및 페이지 업데이트
-- [ ] Phase 5 · 마이페이지
+  - [x] Toss Payments V1 SDK 결제위젯 연동
+    - 결제위젯 컴포넌트 생성 (`components/payment/toss-payment-widget.tsx`)
+    - 체크아웃 폼에 결제위젯 통합 (`components/checkout/toss-checkout-form.tsx`)
+    - 결제 승인 API 라우트 구현 (`app/api/payments/confirm/route.ts`)
+    - 결제 성공/실패 페이지 생성 (`app/payments/success/page.tsx`, `app/payments/fail/page.tsx`)
+    - 주문 생성 후 결제위젯으로 결제 요청 및 승인 처리 완료
+    - 바로 구매 버튼 구현 (`components/cart/buy-now-button.tsx`)
+      - 상품 상세 페이지에서 바로 구매 클릭 시 장바구니 추가 후 체크아웃 페이지로 이동
+      - 체크아웃 페이지에서 Toss Payments 결제위젯을 통해 바로 결제 가능
+- [x] Phase 5 · 마이페이지
   - [x] 주문 내역 목록 페이지 구현 (상태 필터 포함)
   - [x] 주문 상세 화면에서 주문 아이템/배송 정보 표시
   - [x] Supabase 주문 조회 쿼리 모듈 작성 (`lib/supabase/queries/orders.ts`)
@@ -38,3 +47,16 @@
   - [x] PRD 대비 구현 범위 체크리스트 유지 (`docs/prd.md` 갱신)
   - [x] README 업데이트 및 운영 가이드 작성 (`README.md`)
   - [x] MVP 성공 지표 대시보드(임시) 설계 (`docs/reference/mvp-dashboard.md`)
+- [x] Phase 7 · 사용성 개선 & UX 향상
+  - [x] 모든 페이지에 Skeleton UI 적용 (`app/*/loading.tsx`)
+    - 홈, 상품 목록, 상품 상세, 장바구니, 체크아웃, 주문 상세 페이지 로딩 스켈레톤 추가
+    - shadcn/ui Skeleton 컴포넌트 설치 및 활용
+  - [x] 네비게이션 구조 개선 및 반응형 처리
+    - GNB (Global Navigation Bar): 모바일 햄버거 메뉴 추가, sticky 처리
+    - FNB (Footer Navigation Bar): 빠른 링크, 고객 지원, 연락처 정보 포함한 Footer 컴포넌트 생성
+    - 레이아웃에 Footer 통합 및 반응형 최적화
+  - [x] 토스트 알림 기능 구현 및 주요 액션에 적용
+    - shadcn/ui Toast 컴포넌트 설치 및 커스텀 훅(`hooks/use-toast.ts`) 생성
+    - 장바구니 추가/수량 변경/삭제 액션에 토스트 피드백 추가
+    - 주문 제출 시 토스트 알림 적용
+    - 성공/실패 케이스별 토스트 메시지 구분

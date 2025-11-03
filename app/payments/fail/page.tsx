@@ -1,65 +1,46 @@
-export const dynamic = "force-dynamic";
-
-import { auth } from "@clerk/nextjs/server";
+import { Suspense } from "react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-
 import { Button } from "@/components/ui/button";
-import { createClerkSupabaseClient } from "@/lib/supabase/server";
 
-interface FailPageProps {
-  searchParams: Promise<{
-    orderId?: string;
-    message?: string;
-  }>;
-}
-
-export default async function PaymentFailPage({ searchParams }: FailPageProps) {
-  const params = await searchParams;
-  const orderId = params.orderId;
-
-  if (!orderId) {
-    redirect('/cart');
-  }
-
-  const { userId } = await auth();
-  if (!userId) {
-    redirect(`/sign-in?redirect_url=/payments/fail?orderId=${orderId}`);
-  }
-
-  const supabase = createClerkSupabaseClient();
-
-  const { data: order } = await supabase
-    .from('orders')
-    .select('id, clerk_id, status')
-    .eq('id', orderId)
-    .maybeSingle();
-
-  if (order && order.clerk_id === userId && order.status !== 'cancelled') {
-    await supabase
-      .from('orders')
-      .update({ status: 'cancelled' })
-      .eq('id', orderId);
-  }
-
+/**
+ * @file app/payments/fail/page.tsx
+ * @description Toss Payments 결제 실패 페이지
+ */
+function PaymentFailContent() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-8 py-16">
-      <div className="rounded-3xl border border-red-200 bg-red-50 p-8 text-red-700">
-        <h1 className="text-2xl font-semibold">주문이 취소되었습니다</h1>
-        <p className="mt-3 text-sm">
-          {params.message ?? '입금이 확인되지 않아 주문이 취소되었습니다. 다시 주문하시거나 고객센터로 문의해 주세요.'}
+    <div className="mx-auto flex max-w-3xl flex-col gap-10 py-16">
+      <header className="space-y-2 text-center">
+        <h1 className="text-3xl font-semibold text-gray-900">결제에 실패했습니다</h1>
+        <p className="text-sm text-muted-foreground">
+          결제를 다시 시도하거나 다른 결제 수단을 선택해 주세요.
         </p>
-      </div>
+      </header>
 
-      <div className="flex flex-wrap gap-3">
+      <section className="space-y-4 rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+        <h2 className="text-base font-semibold text-gray-900">안내사항</h2>
+        <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
+          <li>카드 한도 초과, 잔액 부족 등의 이유로 결제가 실패할 수 있습니다.</li>
+          <li>결제 정보를 다시 확인한 후 시도해 주세요.</li>
+          <li>문제가 지속되면 고객센터로 문의해 주세요.</li>
+        </ul>
+      </section>
+
+      <div className="flex flex-wrap justify-center gap-3">
         <Button asChild size="sm">
-          <Link href="/checkout">새 주문 진행하기</Link>
+          <Link href="/cart">장바구니로 돌아가기</Link>
         </Button>
         <Button asChild variant="outline" size="sm">
-          <Link href="/cart">장바구니로 돌아가기</Link>
+          <Link href="/products">상품 목록으로 돌아가기</Link>
         </Button>
       </div>
     </div>
   );
 }
 
+export default function PaymentFailPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaymentFailContent />
+    </Suspense>
+  );
+}

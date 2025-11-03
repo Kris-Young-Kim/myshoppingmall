@@ -7,6 +7,7 @@ import {
   fetchProductCategories,
 } from "@/lib/supabase/queries/products";
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
+import { BuyNowButton } from "@/components/cart/buy-now-button";
 import { Button } from "@/components/ui/button";
 import { getProductCategoryLabel } from "@/types/product";
 
@@ -135,15 +136,12 @@ export default async function ProductDetailPage({
               size="lg"
               className="w-full justify-center gap-2"
             />
-            <Button
+            <BuyNowButton
+              productId={product.id}
+              quantity={1}
               size="lg"
-              variant="outline"
               className="w-full gap-2"
-              disabled
-            >
-              <ShoppingCart className="h-4 w-4" />
-              바로 구매 (준비 중)
-            </Button>
+            />
             <Button
               asChild
               variant="ghost"
