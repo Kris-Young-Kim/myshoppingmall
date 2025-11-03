@@ -44,9 +44,10 @@ export function TossPaymentWidget({
         paymentWidgetRef.current = paymentWidget;
 
         // 결제위젯 렌더링
+        // currency를 명시적으로 지정 (기본값: KRW)
         const paymentMethodsWidget = paymentWidget.renderPaymentMethods(
           "#payment-widget",
-          { value: amount },
+          { value: amount, currency: "KRW" },
           { variantKey: "DEFAULT" }
         );
 
@@ -62,6 +63,13 @@ export function TossPaymentWidget({
         console.groupEnd();
       } catch (error) {
         console.error("[payment-widget] 초기화 실패", error);
+        console.error("[payment-widget] 에러 상세", {
+          clientKey: clientKey ? `${clientKey.substring(0, 10)}...` : "없음",
+          customerKey: customerKey ? `${customerKey.substring(0, 10)}...` : "없음",
+          amount,
+          errorMessage: error instanceof Error ? error.message : String(error),
+          errorCode: (error as any)?.code,
+        });
         setIsLoading(false);
         onError?.(error instanceof Error ? error : new Error(String(error)));
       }

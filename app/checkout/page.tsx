@@ -51,8 +51,11 @@ export default async function CheckoutPage() {
     throw new Error("NEXT_PUBLIC_TOSS_CLIENT_KEY 환경 변수가 설정되지 않았습니다.");
   }
 
-  // customerKey는 Clerk userId 사용 (또는 별도로 생성)
-  const customerKey = userId;
+  // customerKey 생성: Clerk userId를 기반으로 안전한 고유 키 생성
+  // Toss Payments 요구사항: 영문 대소문자, 숫자, 특수문자(-, _, =, ., @)를 포함한 2-50자
+  // userId 형식이 이미 요구사항을 만족하므로 그대로 사용 (예: user_xxx)
+  // 만약 형식이 맞지 않으면 userId를 기반으로 변환
+  const customerKey = userId.replace(/[^a-zA-Z0-9_=.-@]/g, "_").substring(0, 50) || `customer_${userId}`;
 
   return (
     <TossCheckoutForm
